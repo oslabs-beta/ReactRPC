@@ -1,4 +1,3 @@
-
 /**
  *
  * Copyright 2018 Google LLC
@@ -15,27 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
-// helloworld_pb.js is for messages
-const { HelloRequest, RepeatHelloRequest,
-  HelloReply } = require('./helloworld_pb.js');
 
-// helloworld_grpc_web_pb is for services for the client and server
-const { GreeterClient } = require('./helloworld_grpc_web_pb.js');
+const reactRPC = require('testreactrpc');
+const requests = require('./helloworld_pb.js');
 
-// hostname is just the path (localhost)
-var client = new GreeterClient('http://' + window.location.hostname + ':8080',
-  null, null);
+const clients = require('./helloworld_grpc_web_pb.js');
 
-// simple unary call
-var request = new HelloRequest();
-request.setName('World');
+reactRPC.build(requests,clients);
+// // helloworld_pb.js is for messages
+// const { HelloRequest, RepeatHelloRequest,
+//   HelloReply } = require('./helloworld_pb.js');
 
-// defines a functionally for the client side - sayHello service
-client.sayHello(request, {}, (err, response) => {
-  console.log(response.getMessage());
-});
+// import { HelloRequest, RepeatHelloRequest,
+//   HelloReply } from './helloworld_pb.js';
+
+// // helloworld_grpc_web_pb is for services for the client and server
+// // const { GreeterClient } = require('./helloworld_grpc_web_pb.js');
+
+// import { GreeterClient } from './helloworld_grpc_web_pb.js';
+
+// // hostname is just the path (localhost)
+// var client = new GreeterClient('http://' + window.location.hostname + ':8080',
+//   null, null);
+
+// // simple unary call
+// var request = new HelloRequest();
+// request.setName('World');
+
+// // defines a functionally for the client side - sayHello service
+// client.sayHello(request, {}, (err, response) => {
+//   console.log(response.getMessage());
+// });
 
 
 // server streaming call
