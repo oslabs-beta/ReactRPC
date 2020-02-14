@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//make sure to put proto3
 syntax = "proto3";
-
+//name the package the same as the name of the proto file
 package helloworld;
 
+//all the calls you can make withing this specific controller
 service Greeter {
   // unary call
   rpc SayHello(HelloRequest) returns (HelloReply);
