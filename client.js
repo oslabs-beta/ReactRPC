@@ -34,6 +34,7 @@ request.setName('World');
 
 // defines a functionally for the client side - sayHello service
 client.sayHello(request, {}, (err, response) => {
+  console.log(response.getMessage());
 });
 
 
