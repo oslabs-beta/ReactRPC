@@ -23,13 +23,14 @@ var _ = require('lodash');
 var async = require('async');
 var protoLoader = require('@grpc/proto-loader');
 var packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {keepCase: true,
-     longs: String,
-     enums: String,
-     defaults: true,
-     oneofs: true
-    });
+  PROTO_PATH,
+  {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+  });
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 var helloworld = protoDescriptor.helloworld;
 
@@ -38,7 +39,7 @@ var helloworld = protoDescriptor.helloworld;
  * @param {function():?} callback
  */
 function doSayHello(call, callback) {
-  callback(null, {message: 'Hello! '+ call.request.name});
+  callback(null, { message: 'Hello! ' + call.request.name });
 }
 
 /**
@@ -69,12 +70,13 @@ function doSayRepeatHello(call) {
 function doSayHelloAfterDelay(call, callback) {
   function dummy() {
     return (cb) => {
+      // delays by 5000 milliseconds 
       _.delay(cb, 5000);
     };
   }
   async.series([dummy()], () => {
     callback(null, {
-      message: 'Hello! '+call.request.name
+      message: 'Hello! ' + call.request.name
     });
   });
 }
