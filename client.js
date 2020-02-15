@@ -1,4 +1,3 @@
-
 /**
  *
  * Copyright 2018 Google LLC
@@ -23,48 +22,72 @@ import App from './client/components/app.jsx';
 const { HelloRequest, RepeatHelloRequest,
   HelloReply } = require('./helloworld_pb.js');
 
-// helloworld_grpc_web_pb is for services for the client and server
-const { GreeterClient } = require('./helloworld_grpc_web_pb.js');
 
-// hostname is just the path (localhost)
-var client = new GreeterClient('http://' + window.location.hostname + ':8080',
-  null, null);
+const reactRPC = require("testreactrpc");
+const requests = require("./helloworld_pb.js");
 
-// simple unary call
-var request = new HelloRequest();
-request.setName('World');
+const clients = require("./helloworld_grpc_web_pb.js");
 
-// defines a functionally for the client side - sayHello service
-client.sayHello(request, {}, (err, response) => {
-  console.log(response.getMessage());
+reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
+// // helloworld_pb.js is for messages
+// const { HelloRequest, RepeatHelloRequest,
+//   HelloReply } = require('./helloworld_pb.js');
+
+// import { HelloRequest, RepeatHelloRequest,
+//   HelloReply } from './helloworld_pb.js';
+
+// // helloworld_grpc_web_pb is for services for the client and server
+// // const { GreeterClient } = require('./helloworld_grpc_web_pb.js');
+
+// import { GreeterClient } from './helloworld_grpc_web_pb.js';
+reactRPC.sayHello({name: "Josh", lastName: "Naso", message: "HelloRequest"}, {}, function (err, resp){
+  console.log(resp.getMessage());
 });
+// // hostname is just the path (localhost)
+// var client = new reactRPC.GreeterClient(
+//   "http://" + window.location.hostname + ":8080",
+//   null,
+//   null
+// );
+let client = reactRPC['client'];
+console.log(client);
+// client = new reactRPC.GreeterClient()
 
+// // simple unary call
+ var request = new reactRPC.HelloRequest(["Hi", " Hows it going"]);
+// //request.setName("World");
+
+// // defines a functionally for the client side - sayHello service
+// client.sayHello(request, {}, (err, response) => {
+//   console.log(response.getMessage());
+// });
 
 // server streaming call
-var streamRequest = new RepeatHelloRequest();
-streamRequest.setName('World');
+var streamRequest = new reactRPC.RepeatHelloRequest();
+streamRequest.setName("World");
 streamRequest.setCount(5);
 
 // defining the sayHello service
 var stream = client.sayRepeatHello(streamRequest, {});
 // this is called everytime we get something from the stream
-stream.on('data', (response) => {
+stream.on("data", response => {
   console.log(response.getMessage());
 });
-
 
 // deadline exceeded
 var deadline = new Date();
 deadline.setSeconds(deadline.getSeconds() + 1);
 
 // adds a deadline to the sayHello service
-client.sayHelloAfterDelay(request, { deadline: deadline.getTime() },
+client.sayHelloAfterDelay(
+  request,
+  { deadline: deadline.getTime() },
   (err, response) => {
-    console.log('Got error, code = ' + err.code +
-      ', message = ' + err.message);
-  });
+    console.log("Got error, code = " + err.code + ", message = " + err.message);
+  }
+);
 
-  render(
-    <App/>, 
-    document.getElementById('main'),
-  );
+render(
+  <App/>,
+  document.getElementById('main')
+);

@@ -29,6 +29,7 @@ service Greeter {
 
 message HelloRequest {
   string name = 1;
+  string lastName = 2;
 }
 
 message RepeatHelloRequest {

@@ -27,8 +27,8 @@ class App extends Component{
     }
 
     render(){
-        this.props.hello();
-        console.log(this.props.myNum);
+        //this.props.hello();
+        //console.log(this.props.myNum);
         return(
             <div>
                 <h1>ReactRPC</h1>
