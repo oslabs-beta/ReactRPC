@@ -16,7 +16,9 @@
  * limitations under the License.
  *
 */
-
+import React from 'react';
+import {render} from 'react-dom';
+import App from './client/components/app.jsx';
 // helloworld_pb.js is for messages
 const { HelloRequest, RepeatHelloRequest,
   HelloReply } = require('./helloworld_pb.js');
@@ -61,3 +63,8 @@ client.sayHelloAfterDelay(request, { deadline: deadline.getTime() },
     console.log('Got error, code = ' + err.code +
       ', message = ' + err.message);
   });
+
+  render(
+    <App/>, 
+    document.getElementById('main'),
+  );
