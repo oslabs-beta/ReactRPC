@@ -77,7 +77,7 @@ function doSayHelloAfterDelay(call, callback) {
   }
   async.series([dummy()], () => {
     callback(null, {
-      message: "Hello! " + call.request.name
+      message: "Hello! " + call.request.name + call.request.lastName
     });
   });
 }
