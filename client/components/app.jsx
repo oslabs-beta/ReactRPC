@@ -7,7 +7,7 @@ const requests = require("../../helloworld_pb.js");
 const clients = require("../../helloworld_grpc_web_pb.js");
 
 reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
-
+//Working
 function wrapper(WrappedComponent){
     return class extends Component{
         constructor(props){
