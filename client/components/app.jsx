@@ -1,14 +1,14 @@
 import React from 'react';
 import { Component } from "react";
-
-const reactRPC = require("testreactrpc");
+//import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
+const {reactRPC, wrapper} = require("testreactrpc");
 const requests = require("../../helloworld_pb.js");
 
 const clients = require("../../helloworld_grpc_web_pb.js");
 
 reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
 //Working
-function wrapper(WrappedComponent){
+function wrapperr(WrappedComponent, reactR){
     return class extends Component{
         constructor(props){
             super(props);
@@ -16,8 +16,8 @@ function wrapper(WrappedComponent){
 
         render(){
         let obj = {};
-          for(let props in reactRPC.functions){
-            obj[props] = reactRPC.functions[props];
+          for(let props in reactR.functions){
+            obj[props] = reactR.functions[props];
           }
             return <WrappedComponent {...obj} {...this.props}></WrappedComponent>
 
@@ -34,6 +34,7 @@ class App extends Component{
         this.props.Greeter.sayHello({name: "Josh", lastName: " Naso", messageType: "HelloRequest"}, {}, (err, response) => {
                console.log(response.getMessage());
         });
+
         return(
             <div>
                 <h1>ReactRPC</h1>
@@ -42,4 +43,4 @@ class App extends Component{
     }
 }
 
-export default wrapper(App);
+export default wrapper(App, reactRPC);

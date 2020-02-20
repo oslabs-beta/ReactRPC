@@ -23,12 +23,12 @@ const { HelloRequest, RepeatHelloRequest,
   HelloReply } = require('./helloworld_pb.js');
 
 
-const reactRPC = require("testreactrpc");
-const requests = require("./helloworld_pb.js");
+// const reactRPC = require("testreactrpc");
+// const requests = require("./helloworld_pb.js");
 
-const clients = require("./helloworld_grpc_web_pb.js");
+// const clients = require("./helloworld_grpc_web_pb.js");
 
-reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
+// reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
 // // helloworld_pb.js is for messages
 // const { HelloRequest, RepeatHelloRequest,
 //   HelloReply } = require('./helloworld_pb.js');
