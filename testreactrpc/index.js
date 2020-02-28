@@ -1,17 +1,61 @@
 // import React from 'react';
 // import { Component } from "react";
 const {reactWrapper} = require('./lib/wrap-original.js');
+const {grpc} = require("@improbable-eng/grpc-web");
 
 const reactRPC = {functions: {}};
 let client = {};
 let messages = {};
-
+let url_name;
 //Sets up the service and message calls through reactRPC
+const improbRPC = {functions:{}}
+improbRPC.build = function(requests,clients,URL){
+  url_name = URL;
+  //map all of requests 
+  if(requests instanceof Array){
+    for(let i = 0; i < requests.length; i++){
+      for(let props in requests[i]){
+        if(requests[i].hasOwnProperty(props)){
+          messages[props] = requests[i][props];
+        }
+      }
+    }
+  }
+  else{
+    messages = requests;
+  }
+  if(clients instanceof Array){
+    for(let i = 0; i < clients.length; i++){
+      for(let props in clients[i]){
+        if(clients[i].hasOwnProperty(props)){
+          client[props] = clients[i][props];
+        }
+      }
+    }
+  }
+  else{
+    client = clients;
+  }
+  //console.log("Messages:",messages,"Services",client);
+  console.log("client heree: ", client);
+  for(let service in client){
+    if(client.hasOwnProperty(service)){
+      improbRPC["functions"][service] ={};
+      for(let keys in client[service]){
+        if(client[service].hasOwnProperty(keys) && typeof client[service][keys]==="function"){
+          improbRPC["functions"][service][keys] = improbableCreator(service,keys);
+        }
+      }
+    }
+  }
+  console.log("Imprpbab",improbRPC["functions"]);
+  console.log("Client",client);
+  console.log("message: ", messages);
+
+
+}
 reactRPC.build = function(requests, clients, URL) {
-  // console.log(requests);
-  // console.log(clients);
   //Maps all the requests from the pb file to ReactRPC
-  //console.log("Hi there");
   if(requests instanceof Array){
     for(let i = 0; i < requests.length; i++){
       for(let props in requests[i]){
@@ -26,7 +70,6 @@ reactRPC.build = function(requests, clients, URL) {
   }
 
   if(clients instanceof Array){
-    //console.log("ClientS: ", clients);
     for(let i = 0; i < clients.length; i++){
       for(let props in clients[i]){
         if(clients[i].hasOwnProperty(props)){
@@ -82,7 +125,25 @@ reactRPC.build = function(requests, clients, URL) {
   //console.log("messages: ", messages);
 };
 
-
+function improbableCreator(service,method){
+  return function(data,meta,cb){
+    if(typeof data==="object"&&data!==null){
+      let req = serialize(data,messages);
+      let user = grpc.client(client[service][method],{
+        host:url_name
+      })
+      user.start(grpc.Metadata(meta));
+      user.send(req);
+      user.onMessage(res=>{
+        return cb(null,res.toObject());
+      })
+      user.finishSend();
+      return user;
+    }else{
+      throw new Error("First parameter must be an object with messageType defined");
+    }
+  }
+}
 function ServiceCreator(clientName, URL){
   //Dynamically create new client with passed in URL
   reactRPC.functions[clientName] = {};
@@ -100,56 +161,7 @@ function ServiceCreator(clientName, URL){
       }
     }
   }
-  function serialize(data,messages){
-    //Build in check if data is an object/array. If not, just return the value  
-    if(Array.isArray(data)){
-      throw new Error("Type must be an object or primitive")
-    }
-    if(typeof data !=="object" || data===null){
-      return data;
-    }
-    //Check to make sure that the user has given a non null messageType property
-    if(!data["messageType"]){
-      throw new Error("MessageType not specified!");
-    }
-    //Check that the messageType exists in the messages object
-    if(!messages[data['messageType']]){
-      throw new Error("MessageType is invalid");
-    }
-    //Create a new instance of the message object using the messgeType property that the user defines for us
-    let newMessage = new messages[data["messageType"]];
-    for(let prop in data){
-      //Loop through all the properties in the object that are not messageType
-      if(data.hasOwnProperty(prop)&&prop!=="messageType"){
-        //If data is an array we need to do a for loop and recursively turn each element into a message object to add 
-        if(Array.isArray(data[prop])){
-          //find the addElement key
-          let newKey = "add"+prop[0].toUpperCase() + prop.slice(1).toLowerCase();
-          //If addElement method is undefined throw Error saying cannot find the proper method 
-          //Otherwise loop through array and add all the elements to the method
-          if(newMessage[newKey]!==undefined){
-            for(let el of data[prop]){
-              let val = serialize(data[prop][el],messages);
-              newMessage[newKey](val);
-            }
-          }else{
-            throw new Error("Message field is invalid: ", prop);
-          }
-        }else{
-          //Otherwise we just set the field with the value of the property
-          let newKey = "set" + prop[0].toUpperCase() + prop.slice(1).toLowerCase();
-          //If method cannot be found throw error
-          if(newMessage[newKey]!==undefined){
-            let val = serialize(data[prop],messages);
-            newMessage[newKey](val);
-          }else{
-            throw new Error("Message field is invalid: ", prop);
-          }
-        }
-      }
-    }
-    return newMessage;
-  }
+  
   //Iterate through all service functions
   // for(prop in reactRPC["client"]){
   //   //Skip unwanted variables
@@ -183,7 +195,56 @@ function ServiceCreator(clientName, URL){
   //   }
   // }
 }
-
+function serialize(data,messages){
+  //Build in check if data is an object/array. If not, just return the value  
+  if(Array.isArray(data)){
+    throw new Error("Type must be an object or primitive")
+  }
+  if(typeof data !=="object" || data===null){
+    return data;
+  }
+  //Check to make sure that the user has given a non null messageType property
+  if(!data["msgType"]){
+    throw new Error("MessageType not specified!");
+  }
+  //Check that the messageType exists in the messages object
+  if(!messages[data['msgType']]){
+    throw new Error("MessageType is invalid");
+  }
+  //Create a new instance of the message object using the messgeType property that the user defines for us
+  let newMessage = new messages[data["msgType"]];
+  for(let prop in data){
+    //Loop through all the properties in the object that are not messageType
+    if(data.hasOwnProperty(prop)&&prop!=="msgType"){
+      //If data is an array we need to do a for loop and recursively turn each element into a message object to add 
+      if(Array.isArray(data[prop])){
+        //find the addElement key
+        let newKey = "add"+prop[0].toUpperCase() + prop.slice(1).toLowerCase();
+        //If addElement method is undefined throw Error saying cannot find the proper method 
+        //Otherwise loop through array and add all the elements to the method
+        if(newMessage[newKey]!==undefined){
+          for(let el of data[prop]){
+            let val = serialize(data[prop][el],messages);
+            newMessage[newKey](val);
+          }
+        }else{
+          throw new Error("Message field is invalid: ", prop);
+        }
+      }else{
+        //Otherwise we just set the field with the value of the property
+        let newKey = "set" + prop[0].toUpperCase() + prop.slice(1).toLowerCase();
+        //If method cannot be found throw error
+        if(newMessage[newKey]!==undefined){
+          let val = serialize(data[prop],messages);
+          newMessage[newKey](val);
+        }else{
+          throw new Error("Message field is invalid: ", prop);
+        }
+      }
+    }
+  }
+  return newMessage;
+}
 reactRPC.wrapper = function(WrappedComponent) {
 
   return reactWrapper(WrappedComponent, reactRPC.functions);
@@ -206,4 +267,4 @@ reactRPC.wrapper = function(WrappedComponent) {
 //   }
 // }
 
-module.exports = reactRPC;
+module.exports = {improbRPC,reactRPC};
