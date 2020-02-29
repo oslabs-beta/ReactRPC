@@ -3,7 +3,6 @@ import { Component } from "react";
 //import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
 const reactRPC  = require("testreactrpc");
 const requests = require("../../helloworld_pb.js");
-
 const clients = require("../../helloworld_grpc_web_pb.js");
 
 reactRPC.build(requests, clients, "http://" + window.location.hostname + ":8080");
@@ -14,10 +13,9 @@ class App extends Component{
     }
 
     render(){
-        this.props.Greeter.sayHello({name: "Josh", lastName: " Naso", messageType: "HelloRequest"}, {}, (err, response) => {
-               console.log(response.getMessage());
+        this.props.Health.check({service: "Greeter", messageType: "HealthCheckRequest"}, {}, (err, response) => {
+            console.log(response.getStatus());
         });
-
         return(
             <div>
                 <h1>ReactRPC</h1>
