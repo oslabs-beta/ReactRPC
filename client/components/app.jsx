@@ -2,7 +2,7 @@ import React from "react";
 import { Component } from "react";
 //import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
 
-const reactRPC = require("../../testreactrpc");
+const { reactRPC } = require("../../testreactrpc");
 const requests = require("../../helloworld_pb.js");
 
 const clients = require("../../helloworld_grpc_web_pb.js");
@@ -16,16 +16,24 @@ reactRPC.build(
 class App extends Component {
   constructor(props) {
     super(props);
+    const stream = this.props.Greeter.sayRepeatHello(
+      { name: "Josh", count: 5, msgType: "RepeatHelloRequest" },
+      {}
+    );
+    stream.on("data", res => {
+      console.log(res.getMessage());
+    });
+    console.log(stream);
   }
 
   render() {
-    this.props.Greeter.sayHello(
-      { name: "Josh", lastName: " Naso", messageType: "HelloRequest" },
-      {},
-      (err, response) => {
-        console.log(response.getMessage());
-      }
-    );
+    // this.props.Greeter.sayHello(
+    //   { name: "Josh", lastName: " Naso", msgType: "HelloRequest" },
+    //   {},
+    //   (err, response) => {
+    //     console.log(response.getMessage());
+    //   }
+    // );
 
     return (
       <div>
