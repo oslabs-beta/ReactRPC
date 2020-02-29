@@ -29,8 +29,12 @@ var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   defaults: true,
   oneofs: true
 });
+
+
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 var helloworld = protoDescriptor.helloworld;
+
+//console.log("Server!");
 
 /**
  * @param {!Object} call
@@ -64,6 +68,27 @@ function doSayRepeatHello(call) {
   });
 }
 
+//Health check that uses a timer to determine server healthiness 
+function doCheck(call, callback){
+  let timer = new Date(); //Start of timer
+  //Any additional functionality can go here 
+  let currentTime = new Date(); //End of timer
+  //Testing if the server takes longer than 20 milliseconds to respond
+  let currentStatus = currentTime.getMilliseconds() > timer.getMilliseconds() + 20 ? "NOT_SERVING" : "SERVING"
+  callback(null, {
+    status: currentStatus
+  });
+}
+
+//Checks takes in and responds to the nested message object
+//Refer to helloworld.proto and TestNested message 
+function doSayHelloNested(call, callback){
+  console.log("Server data: ", call.request);
+  callback(null, {
+    message: "Hello! " + call.request.myName.name + call.request.myName.lastName
+  });
+}
+
 /**
  * @param {!Object} call
  * @param {function():?} callback
@@ -87,11 +112,21 @@ function doSayHelloAfterDelay(call, callback) {
  */
 function getServer() {
   var server = new grpc.Server();
+
+  //Add greeter service functions
   server.addService(helloworld.Greeter.service, {
     sayHello: doSayHello,
     sayRepeatHello: doSayRepeatHello,
-    sayHelloAfterDelay: doSayHelloAfterDelay
+    sayHelloAfterDelay: doSayHelloAfterDelay,
+    sayHelloNested: doSayHelloNested // For testing 
   });
+
+  //Add health service functions
+  server.addService(helloworld.Health.service, {
+    check: doCheck //For health checks
+  });
+
+  //console.log(healthChecks.Health.service);
   return server;
 }
 
