@@ -1,7 +1,7 @@
 import React from 'react';
 import { Component } from "react";
-
-const reactRPC = require("testreactrpc");
+//import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
+const reactRPC  = require("testreactrpc");
 const requests = require("../../helloworld_pb.js");
 const clients = require("../../helloworld_grpc_web_pb.js");
 
@@ -16,7 +16,6 @@ class App extends Component{
         this.props.Health.check({service: "Greeter", messageType: "HealthCheckRequest"}, {}, (err, response) => {
             console.log(response.getStatus());
         });
-        console.log("props: ", this.props);
         return(
             <div>
                 <h1>ReactRPC</h1>
