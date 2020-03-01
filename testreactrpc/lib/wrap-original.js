@@ -25,9 +25,7 @@ var React = require('react');
 var wrap = {};
 
 wrap.reactWrapper = function (WrappedComponent, functions) {
-  return (
-    /*#__PURE__*/
-    function (_React$Component) {
+  return (/*#__PURE__*/function (_React$Component) {
       _inherits(_class, _React$Component);
 
       function _class(props) {

@@ -163,6 +163,7 @@ function ServiceCreator(clientName, URL) {
         if (typeof data === "object" && data !== null) {
           let req = serialize(data, messages);
           const stream = currClient[serviceCall](req, ...args);
+          //Add improbable's streaming calls to create uniformity for users
           if (typeof stream === "object") {
             stream.onMessage = function(cb) {
               stream.on("data", cb);
