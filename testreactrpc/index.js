@@ -273,6 +273,9 @@ function serialize(data, messages) {
 reactRPC.wrapper = function(WrappedComponent) {
   return reactWrapper(WrappedComponent, reactRPC.functions);
 };
+improbRPC.wrapper = function(WrappedComponent) {
+  return reactWrapper(WrappedComponent, improbRPC.functions);
+};
 
 // function Wrapper(WrappedComponent){
 //   return class extends Component{
