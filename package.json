@@ -6,7 +6,7 @@
     "start": "NODE_ENV=production node server/server.js",
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development nodemon server.js & webpack-dev-server --open",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
@@ -28,10 +28,12 @@
   "dependencies": {
     "@babel/core": "^7.8.4",
     "@improbable-eng/grpc-web": "^0.12.0",
+    "jest": "^25.1.0",
     "path": "^0.12.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "source-map-loader": "^0.2.4",
+    "supertest": "^4.0.2",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.5",
     "webpack-dev-server": "^3.10.3"
