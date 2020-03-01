@@ -29,6 +29,8 @@
   "bundleDependencies": false,
   "dependencies": {
     "core-js": "^3.6.4",
+    "@improbable-eng/grpc-web": "^0.12.0",
+    "react": "^16.12.0",
     "regenerator-runtime": "^0.13.3"
   },
   "deprecated": false,
