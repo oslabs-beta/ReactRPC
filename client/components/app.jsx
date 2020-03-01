@@ -20,22 +20,27 @@ class App extends Component {
       { name: "Josh", count: 5, msgType: "RepeatHelloRequest" },
       {}
     );
-    stream.onMessage( res => {
+    stream.onMessage(res => {
       console.log(res.getMessage());
     });
     console.log(stream);
   }
 
-    render(){
-        this.props.Health.check({service: "Greeter", messageType: "HealthCheckRequest"}, {}, (err, response) => {
-            console.log(response.getStatus());
-        });
-        return(
-            <div>
-                <h1>ReactRPC</h1>
-            </div>
-        )
-    }
+  render() {
+    console.log("This is the props", this.props);
+    this.props.Health.check(
+      { service: "Greeter", msgType: "HealthCheckRequest" },
+      {},
+      (err, response) => {
+        console.log(response.getStatus());
+      }
+    );
+    return (
+      <div>
+        <h1>ReactRPC</h1>
+      </div>
+    );
+  }
 }
 
 export default reactRPC.wrapper(App);
