@@ -20,7 +20,7 @@ class App extends Component {
       { name: "Josh", count: 5, msgType: "RepeatHelloRequest" },
       {}
     );
-    stream.on("data", res => {
+    stream.onMessage( res => {
       console.log(res.getMessage());
     });
     console.log(stream);
