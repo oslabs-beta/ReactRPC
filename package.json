@@ -21,7 +21,11 @@
     "lodash": "^4.6.1",
     "nodemon": "^2.0.2",
     "style-loader": "^1.1.3",
+<<<<<<< HEAD
     "testreactrpc": "file:testreactrpc",
+=======
+    "testreactrpc": "^1.0.165",
+>>>>>>> dev
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0"
   },
