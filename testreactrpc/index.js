@@ -140,10 +140,27 @@ function improbableCreator(service, method) {
       });
       user.start(grpc.Metadata(meta));
       user.send(req);
-      user.onMessage(res => {
-        return cb(null, res.toObject());
-      });
-      user.finishSend();
+      if(cb!==undefined){
+        user.onMessage(res=>{
+          return cb(null,res.toObject());
+        })
+      }else{
+        user.on = function(event,cb){
+          switch(event){
+            case "data":
+              user.onMessage(cb)
+              break;
+            case "status":
+              user.onHeaders(cb)
+              break;
+            case "end":
+              user.onEnd(cb)
+              break;
+            default:
+              throw new Error("Not valid listener");
+          }
+        }
+      }
       return user;
     } else {
       throw new Error(
