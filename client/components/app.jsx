@@ -16,11 +16,6 @@ class App extends Component{
         this.props.Health.check({service: "Greeter", messageType: "HealthCheckRequest"}, {}, (err, response) => {
             console.log(response.getStatus());
         });
-<<<<<<< HEAD
-        console.log("props: ", this.props);
-=======
-
->>>>>>> dev
         return(
             <div>
                 <h1>ReactRPC</h1>
