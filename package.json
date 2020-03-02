@@ -4,7 +4,7 @@
   "description": "Full featured integration library for React and gRPC-web",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose"
+    "test": "nodemon googleSpec/server.js & jest --verbose"
   },
   "repository": {
     "type": "git",

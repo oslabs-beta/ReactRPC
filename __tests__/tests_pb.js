@@ -51,55 +51,55 @@ describe("ReactRPC should have built in keys", () => {
   it("ReactRPC should be an Object", () => {
     expect(reactRPC).toBeInstanceOf(Object);
   });
-  //   xit("ReactRPC should have build", () => {
-  //     expect(reactRPC.build).not.toEqual(undefined);
-  //   });
-  //   xit("ReactRPC should have wrapper", () => {
-  //     expect(reactRPC.wrapper).not.toEqual(undefined);
-  //   });
-  //   xit("ReactRPC should have functions", () => {
-  //     expect(reactRPC.functions).not.toEqual(undefined);
-  //   });
+    it("ReactRPC should have build", () => {
+      expect(reactRPC.build).not.toEqual(undefined);
+    });
+    it("ReactRPC should have wrapper", () => {
+      expect(reactRPC.wrapper).not.toEqual(undefined);
+    });
+    it("ReactRPC should have functions", () => {
+      expect(reactRPC.functions).not.toEqual(undefined);
+    });
 });
 
-// xdescribe("ReactRPC should have services", () => {
-//   it("ReactRPC should have Greeter", () => {
-//     expect(reactRPC.functions.Greeter).not.toEqual(undefined);
-//   });
+describe("ReactRPC should have services", () => {
+  it("ReactRPC should have Greeter", () => {
+    expect(reactRPC.functions.Greeter).not.toEqual(undefined);
+  });
 
-//   it("ReactRPC Greeter should have sayHello service", () => {
-//     expect(reactRPC.functions.Greeter.sayHello).not.toEqual(undefined);
-//   });
+  it("ReactRPC Greeter should have sayHello service", () => {
+    expect(reactRPC.functions.Greeter.sayHello).not.toEqual(undefined);
+  });
 
-//   it("ReactRPC Greeter should have sayRepeatHello service", () => {
-//     expect(reactRPC.functions.Greeter.sayRepeatHello).not.toEqual(undefined);
-//   });
+  it("ReactRPC Greeter should have sayRepeatHello service", () => {
+    expect(reactRPC.functions.Greeter.sayRepeatHello).not.toEqual(undefined);
+  });
 
-//   it("ReactRPC Greeter should have sayHelloAfterDelay service", () => {
-//     expect(reactRPC.functions.Greeter.sayHelloAfterDelay).not.toEqual(
-//       undefined
-//     );
-//   });
+  it("ReactRPC Greeter should have sayHelloAfterDelay service", () => {
+    expect(reactRPC.functions.Greeter.sayHelloAfterDelay).not.toEqual(
+      undefined
+    );
+  });
 
-//   it("ReactRPC should have Health", () => {
-//     expect(reactRPC.functions.Health).not.toEqual(undefined);
-//   });
+  it("ReactRPC should have Health", () => {
+    expect(reactRPC.functions.Health).not.toEqual(undefined);
+  });
 
-//   it("ReactRPC healthshould have Check service", () => {
-//     expect(reactRPC.functions.Health.check).not.toEqual(undefined);
-//   });
-// });
+  it("ReactRPC healthshould have Check service", () => {
+    expect(reactRPC.functions.Health.check).not.toEqual(undefined);
+  });
+});
 
-// xdescribe("Unary function should be able to send data", () => {
-//   it("Should be able to send strings", () => {
-//     expect(response).toEqual("Hello! John Doe");
-//   });
+describe("Unary function should be able to send data", () => {
+  it("Should be able to send strings", () => {
+    expect(response).toEqual("Hello! John Doe");
+  });
 
-//   it("Should have health checks", () => {
-//     expect(healthResponse).toEqual(1);
-//   });
+  it("Should have health checks", () => {
+    expect(healthResponse).toEqual(1);
+  });
 
-//   it("Should be able to handle nested messages", () => {
-//     expect(nestedResponse).toEqual("Hello! John Doe");
-//   });
-// });
+  it("Should be able to handle nested messages", () => {
+    expect(nestedResponse).toEqual("Hello! John Doe");
+  });
+});
