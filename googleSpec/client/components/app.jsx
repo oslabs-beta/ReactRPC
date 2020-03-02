@@ -2,7 +2,7 @@ import React from "react";
 import { Component } from "react";
 //import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
 
-const { reactRPC } = require("../../testreactrpc");
+const { reactRPC } = require("../../../testreactrpc");
 
 const requests = require("../../helloworld_pb.js");
 const clients = require("../../helloworld_grpc_web_pb.js");
