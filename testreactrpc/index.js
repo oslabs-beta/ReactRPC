@@ -1,13 +1,11 @@
-
 const { reactWrapper } = require("./lib/wrap-original.js");
 const { grpc } = require("@improbable-eng/grpc-web");
-
-const reactRPC = { functions: {} };
+const reactRPC = { functions: {}, build: {}, wrapper: {} };
 let client = {};
 let messages = {};
 let url_name;
 //Sets up the service and message calls through reactRPC
-const improbRPC = { functions: {} };
+const improbRPC = { functions: {}, build: {}, wrapper: {} };
 improbRPC.build = function(requests, clients, URL) {
   url_name = URL;
   //map all of requests
@@ -50,7 +48,13 @@ improbRPC.build = function(requests, clients, URL) {
     }
   }
 };
-reactRPC.build = function(requests, clients, URL) {
+reactRPC.build = function(
+  requests,
+  clients,
+  URL,
+  config = null,
+  security = null
+) {
   //Maps all the requests from the pb file to ReactRPC
   if (requests instanceof Array) {
     for (let i = 0; i < requests.length; i++) {
@@ -82,7 +86,7 @@ reactRPC.build = function(requests, clients, URL) {
     for (let props in clients) {
       if (clients.hasOwnProperty(props)) {
         if (
-           props.slice(props.length - 6) === "Client" &&
+          props.slice(props.length - 6) === "Client" &&
           !props.includes("Promise")
         ) {
           client[props.slice(0, props.length - 6)] = clients[props];
@@ -93,13 +97,13 @@ reactRPC.build = function(requests, clients, URL) {
 
   for (let props in client) {
     if (client.hasOwnProperty(props)) {
-      ServiceCreator(props, URL);
+      ServiceCreator(props, URL, config, security);
     }
   }
 };
 
 function improbableCreator(service, method) {
-  return function(data, meta, cb) {
+  return function(data, meta, cb = undefined) {
     if (typeof data === "object" && data !== null) {
       let req = serialize(data, messages);
       let user = grpc.client(client[service][method], {
@@ -107,26 +111,26 @@ function improbableCreator(service, method) {
       });
       user.start(grpc.Metadata(meta));
       user.send(req);
-      if(cb!==undefined){
-        user.onMessage(res=>{
-          return cb(null,res.toObject());
-        })
-      }else{
-        user.on = function(event,cb){
-          switch(event){
+      if (cb !== undefined) {
+        user.onMessage(res => {
+          return cb(null, res.toObject());
+        });
+      } else {
+        user.on = function(event, cb) {
+          switch (event) {
             case "data":
-              user.onMessage(cb)
+              user.onMessage(cb);
               break;
             case "status":
-              user.onHeaders(cb)
+              user.onHeaders(cb);
               break;
             case "end":
-              user.onEnd(cb)
+              user.onEnd(cb);
               break;
             default:
               throw new Error("Not valid listener");
           }
-        }
+        };
       }
       return user;
     } else {
@@ -136,10 +140,10 @@ function improbableCreator(service, method) {
     }
   };
 }
-function ServiceCreator(clientName, URL) {
+function ServiceCreator(clientName, URL, config = null, security = null) {
   //Dynamically create new client with passed in URL
   reactRPC.functions[clientName] = {};
-  const currClient = new client[clientName](URL, null, null);
+  const currClient = new client[clientName](URL, config, security);
   for (let serviceCall in currClient) {
     if (!currClient.hasOwnProperty(serviceCall)) {
       reactRPC.functions[clientName][serviceCall] = function(data, ...args) {
@@ -168,7 +172,6 @@ function ServiceCreator(clientName, URL) {
       };
     }
   }
-
 }
 function serialize(data, messages) {
   //Build in check if data is an object/array. If not, just return the value
@@ -204,7 +207,7 @@ function serialize(data, messages) {
             newMessage[newKey](val);
           }
         } else {
-          throw new Error("Message field is invalid: ", prop);
+          throw new Error("Message field is invalid: " + prop);
         }
       } else {
         //Otherwise we just set the field with the value of the property
@@ -215,7 +218,7 @@ function serialize(data, messages) {
           let val = serialize(data[prop], messages);
           newMessage[newKey](val);
         } else {
-          throw new Error("Message field is invalid: ", prop);
+          throw new Error("Message field is invalid: " + prop);
         }
       }
     }
@@ -228,6 +231,5 @@ reactRPC.wrapper = function(WrappedComponent) {
 improbRPC.wrapper = function(WrappedComponent) {
   return reactWrapper(WrappedComponent, improbRPC.functions);
 };
-
 
 module.exports = { improbRPC, reactRPC };
