@@ -1,0 +1,28 @@
+{
+  "name": "ReactRPC",
+  "version": "1.0.0",
+  "description": "Full featured integration library for React and gRPC-web",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/ReactRPC.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oslabs-beta/ReactRPC/issues"
+  },
+  "homepage": "https://github.com/oslabs-beta/ReactRPC#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-react": "^7.8.3",
+    "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "testreactrpc": "file:testreactrpc"
+  }
+}
