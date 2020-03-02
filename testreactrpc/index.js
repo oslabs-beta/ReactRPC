@@ -37,7 +37,7 @@ improbRPC.build = function(requests, clients, URL) {
       for (let keys in client[service]) {
         if (
           client[service].hasOwnProperty(keys) &&
-          typeof client[service][keys] === "function"
+          typeof client[service][keys] !== "string"
         ) {
           improbRPC["functions"][service][keys] = improbableCreator(
             service,
