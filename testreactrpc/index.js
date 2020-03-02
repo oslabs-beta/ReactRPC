@@ -1,5 +1,4 @@
-// import React from 'react';
-// import { Component } from "react";
+
 const { reactWrapper } = require("./lib/wrap-original.js");
 const { grpc } = require("@improbable-eng/grpc-web");
 
@@ -34,8 +33,6 @@ improbRPC.build = function(requests, clients, URL) {
   } else {
     client = clients;
   }
-  //console.log("Messages:",messages,"Services",client);
-  console.log("client heree: ", client);
   for (let service in client) {
     if (client.hasOwnProperty(service)) {
       improbRPC["functions"][service] = {};
@@ -52,9 +49,6 @@ improbRPC.build = function(requests, clients, URL) {
       }
     }
   }
-  console.log("Imprpbab", improbRPC["functions"]);
-  console.log("Client", client);
-  console.log("message: ", messages);
 };
 reactRPC.build = function(requests, clients, URL) {
   //Maps all the requests from the pb file to ReactRPC
@@ -88,7 +82,7 @@ reactRPC.build = function(requests, clients, URL) {
     for (let props in clients) {
       if (clients.hasOwnProperty(props)) {
         if (
-          /*props.length > 13 &&*/ props.slice(props.length - 6) === "Client" &&
+           props.slice(props.length - 6) === "Client" &&
           !props.includes("Promise")
         ) {
           client[props.slice(0, props.length - 6)] = clients[props];
@@ -102,33 +96,6 @@ reactRPC.build = function(requests, clients, URL) {
       ServiceCreator(props, URL);
     }
   }
-
-  // for (let key in requests) {
-  //   if (requests.hasOwnProperty(key)) {
-  //     if (key.slice(key.length - 5) === "Reply") {
-  //       reactRPC[key] = requests[key];
-  //     }
-  //     if (key.slice(key.length - 7) === "Request") {
-  //       reactRPC[key] = requests[key];
-  //       console.log("Request: ", new reactRPC[key]);
-  //     }
-  //   }
-  // }
-  // //Maps all the services from clients
-  // for (let key in clients) {
-  //   if (clients.hasOwnProperty(key)) {
-  //     if (key.slice(key.length - 6) === "Client") {
-  //       reactRPC[key] = requests[key];
-  //       if (!key.includes("Promise")) {
-  //         console.log("Key: ", key);
-  //         CreateAndCallService(clients, key, URL);
-  //       }
-  //     }
-  //   }
-  // }
-  //console.log("reactRPC: ", reactRPC);
-  //console.log("client: ", client);
-  //console.log("messages: ", messages);
 };
 
 function improbableCreator(service, method) {
@@ -202,38 +169,6 @@ function ServiceCreator(clientName, URL) {
     }
   }
 
-  //Iterate through all service functions
-  // for(prop in reactRPC["client"]){
-  //   //Skip unwanted variables
-  //   if(prop === "client_" || prop === "hostname_"){
-  //     continue;
-  //   }
-
-  //   //Set service function to ReactRPC object
-  //   reactRPC[prop] = function(data, metadata, callback){
-  //     console.log("data: ", data);
-  //     //Inputted object must have message type
-  //     if(!data['message']){
-  //       console.log("data: ", data.message);
-  //       throw new Error("No message type specified!");
-  //     }
-  //     else{
-  //       let temp = new reactRPC[data['message']];
-  //       for(el in data){
-  //         if(el !== 'message'){
-  //           let newKey = "set" + el[0].toUpperCase() + el.slice(1).toLowerCase();
-  //           if(temp[newKey] !== undefined){
-  //             temp[newKey](data[el]);
-  //           }
-  //           else{
-  //             throw new Error("Message type is invalid: ", el);
-  //           }
-  //         }
-  //       }
-  //       reactRPC['client'][prop](temp, metadata, callback);
-  //     }
-  //   }
-  // }
 }
 function serialize(data, messages) {
   //Build in check if data is an object/array. If not, just return the value
@@ -294,21 +229,5 @@ improbRPC.wrapper = function(WrappedComponent) {
   return reactWrapper(WrappedComponent, improbRPC.functions);
 };
 
-// function Wrapper(WrappedComponent){
-//   return class extends Component{
-//       constructor(props){
-//           super(props);
-//       }
-
-//       render(){
-//         let obj = {};
-//           for(let props in reactRPC.functions){
-//             obj[props] = reactRPC.functions[props];
-//           }
-
-//           return (<WrappedComponent {...obj} {...this.props}></WrappedComponent>);
-//       }
-//   }
-// }
 
 module.exports = { improbRPC, reactRPC };
