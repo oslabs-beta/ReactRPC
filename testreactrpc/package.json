@@ -55,8 +55,7 @@
   "scripts": {
     "prepublishOnly": "babel ./lib --out-dir ./lib",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc index.ts --watch",
-
+    "build": "tsc index.ts --watch"
   },
-  "version": "1.0.201"
+  "version": "1.0.203"
 }
