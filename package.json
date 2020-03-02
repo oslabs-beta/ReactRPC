@@ -27,9 +27,10 @@
   },
   "dependencies": {
     "@babel/core": "^7.8.4",
+    "@improbable-eng/grpc-web": "^0.12.0",
     "jest": "^25.1.0",
     "path": "^0.12.7",
-    "react": "^16.12.0",
+    "react": "^16.13.0",
     "react-dom": "^16.12.0",
     "source-map-loader": "^0.2.4",
     "supertest": "^4.0.2",
