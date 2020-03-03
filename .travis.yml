@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+services:
+  - docker
+before_install:
+  - docker build -t helloworld/envoy -f ./envoy.Dockerfile .
+  - docker run -d -p 8080:8080 -p 9901:9901 --network=host helloworld/envoy
+#New commit
