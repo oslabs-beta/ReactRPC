@@ -16,7 +16,7 @@ npm install --save reactrpc
 ## 1. Define the Services
 Create proto files as the schema for your Server and Client Stubs.  It should define the gRPC call methods needed to communicate between the Server and browser. These files will be used to give your components superpowers -- Remote Procedure Call (RPC) methods. 
 
-
+`helloworld.proto`
 ```protobuf
 syntax = "proto3";
 
@@ -34,8 +34,8 @@ message HelloReply {
   string message = 1;
 }
 ```
-
-```
+`book_service.proto`
+```protobuf
 syntax = "proto3";
 
 package examplecom.library;
@@ -70,7 +70,7 @@ To generate the protobuf messages and client service stub class from your
 `.proto` definitions, we need the `protoc` binary and the
 `protoc-gen-grpc-web` plugin.
 
-You can download the `protoc-gen-grpc-web` protoc plugin from our
+You can download the `protoc-gen-grpc-web` protoc plugin from Google's
 [release](https://github.com/grpc/grpc-web/releases) page:
 
 If you don't already have `protoc` installed, you will have to download it
@@ -97,14 +97,10 @@ $ protoc -I=. helloworld.proto \
 
 After the command runs successfully on your `[name of proto].proto` you should see two generated files `[name of proto]_pb.js` which contains the messages and `[name of proto]_grpc_web_pb.js` that contains the services:
 
-For instance for the helloworld.proto you should see:
- - `helloworld_pb.js`: this contains the `HelloRequest` and `HelloReply`
-   classes
- - `helloworld_grpc_web_pb.js`: this contains the `GreeterClient` class
+For instance the `helloworld.proto` file will generate to:
+ - messages : `helloworld_pb.js`    
+ - services : `helloworld_grpc_web_pb.js` 
  
-These are also the 2 files that our `client.js` file imported earlier in the
-example.
-
 ## For Improbable's implementation:
 
 For the latest stable version of the ts-protoc-gen plugin:
@@ -126,28 +122,33 @@ When you have both `protoc` and `ts-protoc-gen` installed, you can now run this 
   --ts_out=service=true:./ts/_proto \
   ./proto/examplecom/library/book_service.proto
 ```
-After the command runs successfully on your `[name of proto].proto` you should see two generated files `[name of proto]_pb.js` which contains the messages and `[name of proto]_grpc_web_pb.js` that contains the services:
+After the command runs successfully on your `[insert_name].proto` you should see two generated files `[insert_name]_pb.js` which contains the messages and `[insert_name]_pb_service.js` that contains the services:
 
 For instance for the helloworld.proto you should see:
- - `helloworld_pb.js`: this contains the `HelloRequest` and `HelloReply`
-   classes
- - `helloworld_grpc_web_pb.js`: this contains the `GreeterClient` class
+ - messages : `book_service_pb.js`
+ - services : `book_service_pb_service.js`
 
 
-## 3. Create a server
-Now that we have our package, we need a Server. Let's import the `Server` class from the Firecomm library.
+## 3. Create proxy server
+
+In order for gRPC-web to communicate with other gRPC servers, it requires a proxy server as a translation layer to convert between gRPC-web messages and gRPC protobuffers. Links to examples on how to set those up can be found [here](https://github.com/grpc/grpc-web/tree/master/net/grpc/gateway/examples/helloworld) (Envoy proxy) and [here](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy) (Improbable's proxy)*
+
+*Note: To enable bidirectional/client-side streaming you must use Improbable's spec and its proxy with websockets enabled
+
+
+## 4. Define a message
+
+We define a message by passing in an object with ???????????????????????/
 
 ```javascript
-// /server/server.js
-const { Server } = require( 'firecomm' );
-const server = new Server();
+const message = this.props.Greeter.sayHello(
+      { name: "John", lastName: "Doe", msgType: "sayHelloRequest" },
+      {}
+      );
+    stream.onMessage(res => {
+      console.log(res.getMessage());
+    });
 ```
-
-> Under the hood, Firecomm extends Google's gRPC core channel configurations. You can pass an Object to the Server as the first argument to configure advanced options. You can see all of the Object properties and the values you can set them to in the gRPC core docs [here](https://grpc.github.io/grpc/core/group__grpc__arg__keys.html).
-
-## 4. Define the server-side Handler
-
-Before we can interact with a client, our Server needs Handlers. Handlers are usually unique to each RPC Method. In order to demonstrate the power of gRPCs, we will be listening for client requests and immediately sending back server responses in a ping-pong pattern. Metadata is sent only once at the start of the exchange, which will trigger Node's built in timers to start clocking the nanoseconds between responses and requests.
 
 ```javascript
 // /server/chattyMathHandlers.js
