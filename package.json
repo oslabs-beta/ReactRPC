@@ -22,6 +22,7 @@
     "@babel/preset-react": "^7.8.3",
     "@grpc/proto-loader": "^0.5.3",
     "async": "^3.2.0",
+    "google-protobuf": "^3.11.4",
     "grpc": "^1.24.2",
     "jest": "^25.1.0",
     "lodash": "^4.17.15",
