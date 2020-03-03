@@ -3,7 +3,7 @@
 ![badge](https://img.shields.io/badge/build-passing-green?labelColor=444444)
 ![badge](https://img.shields.io/badge/license-Apache--2.0-green)
 
-Feature library for gRPC-Web. Core functions include: packaging the generated proto messages and service client stubs, a unified API of chainable RPC call methods that support Google's (for Javascript) and Improbable's (for Golang and TypeScript) client-side, server-side and bi-directional streaming. 
+Full featured integration library for React and gRPC-Web. Core functions include: packaging the generated proto messages and service client stubs, a unified API of chainable gRPC call methods that support Google's and Improbable's gRPC web specs for unary, client-side, server-side and bi-directional streaming. 
 
 Check out the [documentation website](https://firecomm.github.io)!
 
@@ -13,8 +13,9 @@ Check out the [documentation website](https://firecomm.github.io)!
 npm install --save reactrpc
 ```
 
-## 1. Define a .proto file
-The .proto file is the schema for your Servers and client Stubs. It defines the package you will build which will give your Server and Client superpowers -- Remote Procedure Call (RPC) methods. RPC methods define what Message the client Stubs send and receive from the server Handlers.
+## 1. Define the Services
+Create proto files as the schema for your Server and Client Stubs.  It should define the gRPC call methods needed to communicate between the Server and browser. These files will be used to give your components superpowers -- Remote Procedure Call (RPC) methods. 
+
 
 ```protobuf
 syntax = "proto3";
@@ -34,11 +35,35 @@ message HelloReply {
 }
 ```
 
-> The HelloRequest message received on either side will be an Object with the properties `name` and `lastName`. The values will be string. You can read more about protobufs and all of the possible Message fields at Google's developer docs [here](https://developers.google.com/protocol-buffers/docs/proto3).
+```
+syntax = "proto3";
+
+package examplecom.library;
+
+message Book {
+  int64 isbn = 1;
+  string title = 2;
+  string author = 3;
+}
+
+message GetBookRequest {
+  int64 isbn = 1;
+}
+
+message QueryBooksRequest {
+  string author_prefix = 1;
+}
+
+service BookService {
+  rpc GetBook(GetBookRequest) returns (Book) {}
+  rpc QueryBooks(QueryBooksRequest) returns (stream Book) {}
+}
+
+```
 
 ## 2. Generate a Protobuf Messages and Client Service Stub
 
-In order to pass superpowers to our Server and client Stubs, we first need to package our .proto file. 
+In order to pass superpowers to our Browser, we first need to package our .proto file. 
 
 ## For Google's implementation:
 To generate the protobuf messages and client service stub class from your
@@ -70,9 +95,9 @@ $ protoc -I=. helloworld.proto \
   --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.
 ```
 
-After the command runs successfully, you should now see two new files generated
-in the current directory:
+After the command runs successfully on your `[name of proto].proto` you should see two generated files `[name of proto]_pb.js` which contains the messages and `[name of proto]_grpc_web_pb.js` that contains the services:
 
+For instance for the helloworld.proto you should see:
  - `helloworld_pb.js`: this contains the `HelloRequest` and `HelloReply`
    classes
  - `helloworld_grpc_web_pb.js`: this contains the `GreeterClient` class
@@ -80,10 +105,33 @@ in the current directory:
 These are also the 2 files that our `client.js` file imported earlier in the
 example.
 
-### For Improbable's implementation:
+## For Improbable's implementation:
+
+For the latest stable version of the ts-protoc-gen plugin:
+
+```
+npm install ts-protoc-gen
+```
+
+Download or install protoc (the protocol buffer compiler) for your platform from the github releases page or via a package manager (ie: brew, apt).
 
 Download protoc from [here](https://github.com/protocolbuffers/protobuf/releases) 
 
+When you have both `protoc` and `ts-protoc-gen` installed, you can now run this command:
+
+```
+--plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
+  -I ./proto \
+  --js_out=import_style=commonjs,binary:./ts/_proto \
+  --ts_out=service=true:./ts/_proto \
+  ./proto/examplecom/library/book_service.proto
+```
+After the command runs successfully on your `[name of proto].proto` you should see two generated files `[name of proto]_pb.js` which contains the messages and `[name of proto]_grpc_web_pb.js` that contains the services:
+
+For instance for the helloworld.proto you should see:
+ - `helloworld_pb.js`: this contains the `HelloRequest` and `HelloReply`
+   classes
+ - `helloworld_grpc_web_pb.js`: this contains the `GreeterClient` class
 
 
 ## 3. Create a server
