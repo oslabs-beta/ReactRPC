@@ -17,6 +17,7 @@ const userMsg = {
   msgType: "GetBookRequest",
   isbn: 60929871
 };
+console.log(rpc);
 let temp = rpc.functions.BookService.GetBook(userMsg, {}, (err, res) => {
   console.log("Response:   ", res);
 });
