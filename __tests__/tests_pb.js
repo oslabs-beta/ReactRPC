@@ -1,6 +1,6 @@
 const { reactRPC } = require("testreactrpc");
-const requests = require("../googleSpec/helloworld_pb.js");
-const clients = require("../googleSpec/helloworld_grpc_web_pb.js");
+const requests = require("../helloworld_pb.js");
+const clients = require("../helloworld_grpc_web_pb.js");
 
 let response;
 let healthResponse;
@@ -51,15 +51,15 @@ describe("ReactRPC should have built in keys", () => {
   it("ReactRPC should be an Object", () => {
     expect(reactRPC).toBeInstanceOf(Object);
   });
-    it("ReactRPC should have build", () => {
-      expect(reactRPC.build).not.toEqual(undefined);
-    });
-    it("ReactRPC should have wrapper", () => {
-      expect(reactRPC.wrapper).not.toEqual(undefined);
-    });
-    it("ReactRPC should have functions", () => {
-      expect(reactRPC.functions).not.toEqual(undefined);
-    });
+  it("ReactRPC should have build", () => {
+    expect(reactRPC.build).not.toEqual(undefined);
+  });
+  it("ReactRPC should have wrapper", () => {
+    expect(reactRPC.wrapper).not.toEqual(undefined);
+  });
+  it("ReactRPC should have functions", () => {
+    expect(reactRPC.functions).not.toEqual(undefined);
+  });
 });
 
 describe("ReactRPC should have services", () => {
