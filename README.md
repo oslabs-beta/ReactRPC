@@ -138,177 +138,26 @@ In order for gRPC-web to communicate with other gRPC servers, it requires a prox
 
 ## 4. Define a message
 
-We define a message by passing in an object with ???????????????????????/
+We define a request message by creating an object with the keys as the message field along with the msgType that we set in the proto file. Here is an example:
+
+```
+{ name: "John", lastName: "Doe", msgType: "HelloRequest" }
+```
+
+## 5. Create the function
+
+We define a function by setting it to the call of our service that lives on `this.props`. All the calls would be in the service that is defined in the proto file. We then pass in the message we defined above, an object with metadata data (learn more about metadata [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md)) and a callback. 
 
 ```javascript
-const message = this.props.Greeter.sayHello(
-      { name: "John", lastName: "Doe", msgType: "sayHelloRequest" },
+const stream = this.props.Greeter.sayRepeatHello(
+      { name: "Josh", count: 5, msgType: "RepeatHelloRequest" },
       {}
-      );
+    );
     stream.onMessage(res => {
       console.log(res.getMessage());
     });
 ```
 
-```javascript
-// /server/chattyMathHandlers.js
-function BidiMathHandler(bidi) {
-  let start;
-  let current;
-  let perReq;
-  let perSec;
-  bidi
-    .on('metadata', (metadata) => {
-      start = Number(process.hrtime.bigint()); // marks a start time in nanoseconds
-      bidi.set({thisSetsMetadata: 'responses incoming'})
-      console.log(metadata.getMap()); // maps the special metadata object as a simple Object
-    })
-    .on('error', (err) => {
-      console.error(err)
-    })
-    .on('data', (benchmark) => {
-      bidi.send(
-        {
-          requests: benchmark.requests, 
-          responses: benchmark.responses + 1
-        }
-      );
-      if (benchmark.requests % 10000 === 0) {
-        current = Number(process.hrtime.bigint()); // marks the current time in nanoseconds
-        perReq = ((current - start) /1000000) / benchmark.requests; // finds the difference in time from start to current, converts nanoseconds to milliseconds, and averages the time per request from total requests
-        perSec = 1 / (perReq / 1000); // inverts milliseconds per request to requests per second
-      console.log(
-        '\nclient address:', bidi.getPeer(), // returns the client address
-        '\nnumber of requests:', benchmark.requests, // total requests
-        '\navg millisecond speed per request:', perReq,
-        '\nrequests per second:', perSec,
-      );
-    }
-  })
-}
+>ReactRPC library supports unary, client-side, server-side and bi-directional streaming.  
 
-module.exports = { 
-	BidiMathHandler,
-}
-```
-
-> As I'm sure you've noticed, the Objects we are receiving and sending have exactly the properties and value-types we defined in the Benchmark message in the .proto file. If you attempt to send an incorrectly formatted Object, the RPC Method will coerce the Object into a Message with the correct formatting. Values will be coerced to a default falsey value: `{ aString: '' }`, `{ someObject: {}, anArray: [] }`, or in our BidiMath example `{ requests: 0, responses: 0 }`.
-
-## 5. Add the Services
-
-Let's import the Handler and the package and add each Service to our Server alongside an Object mapping the name of the RPC Method with the Handler we created.
-
-```javascript
-// /server/server.js
-const { Server } = require( 'firecomm' );
-const package = require( '../proto/package.js' );
-const { BidiMathHandler } = require ( './chattyMathHandlers.js' );
-
-new Server()
-  .addService( package.ChattyMath,   {
-  BidiMath: BidiMathHandler,
-})
-```
-> Servers can chain the .addService method as many times as they wish for each Service that we defined in the .proto file. If you have multiple RPC methods in a Service, each should be mapped as a property on the Object with a Handler function as the value. Not mapping all of your RPC Methods will cause a Server error.
-
-## 6. Bind the server to addresses
-
-```javascript
-// /server/server.js
-const { Server } = require( 'firecomm' );
-const package = require( '../proto/package.js' );
-const { BidiMathHandler } = require ( './chattyMathHandlers.js' );
-
-new Server()
-  .addService( package.ChattyMath,   {
-  BidiMath: BidiMathHandler,
-})
-  .bind('0.0.0.0: 3000')
-```
-> The .bind method can be passed an array of strings to accept requests at any number of addresses. For example:
-> ```javascript
-> server.bind( [ 
->   '0.0.0.0: 3000', 
->   '0.0.0.0: 8080', 
->   '0.0.0.0: 9900',
-> ] );
-> ```
-## 7. Start the server
-```javascript
-// /server/server.js
-const { Server } = require( 'firecomm' );
-const package = require( '../proto/package.js' );
-const { BidiMathHandler } = require ( './chattyMathHandlers.js' );
-
-new Server()
-  .addService( 
-    package.ChattyMath,   
-    { BidiMath: BidiMathHandler }
-  )
-  .bind('0.0.0.0: 3000')
-  .start();
-```
-> Run your new firecomm/gRPC-Node server with: `node server/server.js`. It may also be worthwhile to map this command to `npm start` in your `package.json`.
-
-## 8.  Create a client Stub for each Service:
-Now that the server is up and running, we have to pass superpowers to the client-side. We open channels by connecting each Stub to the same address as a Server is bound to. In order for the Stub to be able to make RPC Method requests we need to pass the package.Service into a newly constructed `Stub`.
-```javascript
-// /clients/chattyMath.js
-const { Stub } = require( 'firecomm' );
-const package = require( '../proto/package.js' )
-const stub = new Stub( 
-	package.ChattyMath, 
-	'localhost: 3000', // also can be '0.0.0.0: 3000'
-);
-```
-> Under the hood, Firecomm extends Google's gRPC core channel configurations. You can pass an Object to the Stub as the second argument to configure advanced options. **Note: Any channel configurations on the client Stub should match the configurations on the server it is requesting to.** You can see all of the Object properties and the values you can set them to in the gRPC core docs [here](https://grpc.github.io/grpc/core/group__grpc__arg__keys.html).
-
-## 9. Make requests from the Stub and see how many requests and responses a duplex can make!
-Before we can interact with a server, our client Stub needs to invoke the RPC Method. We can also pass any metadata we would like to send at this point as the first argument of the RPC Method. RPC Methods now exist on the Stub just like it was defined in the .proto file because we passed the package.Service into the Stub constructor. Because we defined the RPC Method to send a stream of messages and return a stream of messages, both the client Stub and the server can send and listen for any number of messages over a long-living TCP connection. 
-
-Once the RPC Method is invoked, the client Stub always sends the first request. As soon as the server Handler receives the request, the ping-pong will begin. Similarly to the server Handler, now on the client-side, we will begin listening for server requests and immediately sending back client responses. Again, metadata is received from the server only once at the start of the exchange, which will trigger Node's built in timers to start clocking the nanoseconds between requests and responses.
-```javascript
-// /clients/chattyMath.js
-const { Stub } = require( 'firecomm' );
-const package = require( '../proto/package.js' )
-const stub = new Stub( 
-  package.ChattyMath, 
-  'localhost: 3000',
-);
-
-let start;
-let current;
-let perRes;
-let perSec;
-const bidi = stub.bidiMath({thisIsMetadata: 'let the races begin'})
-  .send({requests: 1, responses: 0})
-  .on( 'metadata', (metadata) => {
-    start = Number(process.hrtime.bigint()); // marks a start time in nanoseconds 
-    console.log(metadata.getMap()) // maps the special metadata object as a simple Object
-  })
-  .on( 'error', (err) => console.error(err))
-  .on( 'data', (benchmark) => {
-    bidi.send(
-      {
-        requests: benchmark.requests + 1, 
-        responses: benchmark.responses
-      }
-    )
-    if (benchmark.responses % 10000 === 0) {
-      current = Number(process.hrtime.bigint()); // marks the current time in nanoseconds 
-      perRes = ((current - start) / 1000000) / benchmark.responses; // finds the difference in time from start to current, converts nanoseconds to milliseconds, and averages the time per response from total responses
-      perSec = 1 / (perRes / 1000); // inverts milliseconds per response to responses per second
-    console.log(
-      'server address:', bidi.getPeer(), // returns the server address
-      '\ntotal number of responses:', benchmark.responses, // total responses
-      '\navg millisecond speed per response:', perRes,
-      '\nresponses per second:', perSec,
-    )
-  }
-});
-```
-> Run your new firecomm/gRPC-Node client with: `node clients/chattyMath.js`. It may also be worthwhile to map this command to a script like `npm run client` in your `package.json`.
-
-Now enjoy the power of gRPCs! See how many requests and responses you can make per second with one duplex RPC method! 
-
-Explore the flexible possibilities! Creatively modify the bidiMath to be full duplex instead of ping-ponging. Add more client Stubs to run services in parallel to one server address, bind multiple addresses to the Server, run multiple clients with their own Stubs requesting from separate addresses, etc. And once you feel comfortable with the clients and servers, dive into modifying the .proto file to change the message fields or add multiple messages with different fields to send and receive, add multiple RPC methods to one Service, or add multiple Services to the package. Then, build the new .proto, add each package.Service to a server, create a Stub with the each matching package.Service and a server address, and explore the endless potential of gRPCs!
+Check out the [documentation website](https://firecomm.github.io)!
