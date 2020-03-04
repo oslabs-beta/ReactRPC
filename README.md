@@ -3,9 +3,7 @@
 ![badge](https://img.shields.io/badge/build-passing-green?labelColor=444444)
 ![badge](https://img.shields.io/badge/license-Apache--2.0-green)
 
-Full featured integration library for React and gRPC-Web. Core functions include: packaging the generated proto messages and service client stubs, a unified API of chainable gRPC call methods that support Google's and Improbable's gRPC web specs for unary, client-side, server-side and bi-directional streaming. 
-
-Check out the [documentation website](https://firecomm.github.io)!
+Full featured integration library for React and gRPC-Web. Core functions include: packaging the generated proto messages and client stubs, a unified API of gRPC call methods that support Google's and Improbable's gRPC-web specs for unary, client streaming, server streaming and bi-directional streaming. 
 
 # Getting Started
 ## Install
@@ -14,7 +12,7 @@ npm install --save reactrpc
 ```
 
 ## 1. Define the Services
-Create proto files as the schema for your Server and Client Stubs.  It should define the gRPC call methods needed to communicate between the Server and browser. These files will be used to give your components superpowers -- Remote Procedure Call (RPC) methods. 
+Create proto files as the schema for your Server and Client Stubs.  It should define the gRPC call methods needed to communicate between the Server and Browser. These files will be used to give your components superpowers -- Remote Procedure Call (RPC) methods. 
 
 `helloworld.proto`
 ```protobuf
@@ -131,26 +129,40 @@ For instance for the helloworld.proto you should see:
 
 ## 3. Create proxy server
 
-In order for gRPC-web to communicate with other gRPC servers, it requires a proxy server as a translation layer to convert between gRPC-web messages and gRPC protobuffers. Links to examples on how to set those up can be found [here](https://github.com/grpc/grpc-web/tree/master/net/grpc/gateway/examples/helloworld) (Envoy proxy) and [here](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy) (Improbable's proxy)*
+In order for gRPC-web to communicate with other gRPC servers, it requires a proxy server as a translation layer to convert between gRPC-web protobuffers and gRPC protobuffers. Links to examples on how to set those up can be found [here](https://github.com/grpc/grpc-web/tree/master/net/grpc/gateway/examples/helloworld) (Envoy proxy) and [here](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy) (Improbable's proxy)*
 
-*Note: To enable bidirectional/client-side streaming you must use Improbable's spec and its proxy with websockets enabled
+>*Note: To enable bidirectional/client-side streaming you must use Improbable's spec and its proxy with websockets enabled
 
 
 ## 4. Define a message
 
-We define a request message by creating an object with the keys as the message field along with the msgType that we set in the proto file. Here is an example:
+We define a request message by creating an object with the keys as the message field along with a `msgType` property specifying a message that we set in the proto file. Here is an example of a `HelloRequest` message in the `helloworld.proto` file :
 
-```
-{ name: "John", lastName: "Doe", msgType: "HelloRequest" }
+
+```javascript
+const message = { name: "John", lastName: "Doe", msgType: "HelloRequest" }
 ```
 
 ## 5. Create the function
 
-We define a function by setting it to the call of our service that lives on `this.props`. All the calls would be in the service that is defined in the proto file. We then pass in the message we defined above, an object with metadata data (learn more about metadata [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md)) and a callback. 
+We define a function by listing its service and procedure calls on `this.props`. We then pass in the message we defined above, and an object with any metadata data required (learn more about metadata [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md)). For unary calls a third parameter of a callback is required while streaming calls have built in event listeners.
+
 
 ```javascript
+// unary call:
+
+this.props.Greeter.sayHello(
+  message,
+      {},
+      (err, response) => {
+        console.log(response)
+      }
+    );
+
+// streaming call
+
 const stream = this.props.Greeter.sayRepeatHello(
-      { name: "Josh", count: 5, msgType: "RepeatHelloRequest" },
+  message,
       {}
     );
     stream.onMessage(res => {
@@ -160,4 +172,4 @@ const stream = this.props.Greeter.sayRepeatHello(
 
 >ReactRPC library supports unary, client-side, server-side and bi-directional streaming.  
 
-Check out the [documentation website](https://firecomm.github.io)!
+Check out the [documentation website] for more details on defining messages and sending functions!
