@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const _ = require('lodash');
 
 const app = express();
 
@@ -18,6 +19,10 @@ app.get('/', (req, res) => {
 
 app.post('/restful', (req, res) => {
     const str = req.body.data;
+    let x = 0;
+    while(x < 100000000){
+        x++;
+    }
     res.status(200).json({message: str});
 });
 

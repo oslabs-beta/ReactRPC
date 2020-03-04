@@ -53,11 +53,11 @@ function doSayRepeatHello(call) {
       call.write({
         message: "Hey! " + name
       });
-      _.delay(callback, 500); // in ms
+     _.delay(callback, 0); // in ms
     };
   }
   for (var i = 0; i < call.request.count; i++) {
-    senders[i] = sender(call.request.name + i);
+    senders[i] = sender(call.request.name + " " + i);
   }
   async.series(senders, () => {
     call.end();

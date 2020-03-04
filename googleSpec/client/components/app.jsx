@@ -28,11 +28,11 @@ class App extends Component {
 
   render() {
     console.log("This is the props", this.props);
-    this.props.Health.check(
-      { service: "Greeter", msgType: "HealthCheckRequest" },
+    this.props.Greeter.sayHello(
+      { name: "John", lastName: " Doe", msgType: "HelloRequest" },
       {},
-      (err, response) => {
-        console.log(response.getStatus());
+      (err, res) => {
+        console.log(res.getMessage());
       }
     );
     return (

@@ -19,20 +19,23 @@ const userMsg = {
 };
 console.log(rpc);
 let temp = rpc.functions.BookService.GetBook(userMsg, {}, (err, res) => {
-  console.log("Response:   ", res);
+  //console.log("Response:   ", res);
 });
-console.log("Temp", temp);
-console.log(service);
+//console.log("Temp", temp);
+//console.log(service);
 function getBook() {
   const getBookRequest = new GetBookRequest();
+  const getBookRequest2 = new GetBookRequest();
   getBookRequest.setIsbn(60929871);
+  getBookRequest2.setIsbn(172121283);
   const client = grpc.client(service.BookService.GetBook, {
     host: host
   });
   client.start();
   client.send(getBookRequest);
+  client.send(getBookRequest2);
   client.onMessage((message: Book) => {
-    console.log("onMessage", message.toObject());
+    //console.log("onMessage", message.toObject());
   });
   client.finishSend();
 }
@@ -57,3 +60,5 @@ function queryBooks() {
   client.start();
   client.send(queryBooksRequest);
 }
+
+queryBooks();

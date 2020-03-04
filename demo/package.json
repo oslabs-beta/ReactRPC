@@ -1,4 +1,5 @@
 {
+
   "name": "soloproject",
   "version": "1.0.0",
   "description": "ReactRPC Demo",
@@ -6,7 +7,7 @@
   "scripts": {
     "start": "node SERVER/server.js",
     "build": "webpack --env.NODE_ENV=production --open",
-    "dev": "webpack-dev-server --env.NODE_ENV=development --open | node SERVER/server.js",
+    "dev": "webpack-dev-server --env.NODE_ENV=development --open | node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +25,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
+    "lodash": "^4.17.15",
     "mongoose": "^5.8.9",
     "node-fetch": "^2.6.0",
     "pg": "^7.17.1",
@@ -32,7 +34,8 @@
     "react-hot-loader": "^4.12.18",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
-    "styled-components": "^5.0.0"
+    "styled-components": "^5.0.0",
+    "testreactrpc": "^1.0.205"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",

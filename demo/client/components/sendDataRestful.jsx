@@ -24,7 +24,7 @@ class SendRest extends Component{
     }
 
     getDataRestful(input){
-        let startTime = new Date();
+        let startTime = Date.now();
         fetch("/restful", {method: "POST", 
         headers: {
             'Content-Type': 'application/json',
@@ -33,13 +33,15 @@ class SendRest extends Component{
         })
         .then((data) => data.json())
         .then((data) => {
-            let currentTime = new Date();
-            let totalTime = currentTime.getMilliseconds() - startTime.getMilliseconds();
+            let currentTime = Date.now();
+            let totalTime = currentTime - startTime;
             console.log("Data: ", data);
             console.log("TotalTime: ", totalTime);
             const timerT = this.state.timer + totalTime;
             const counterT = this.state.counter + 1;
             const averageT = (timerT / counterT).toFixed(2);
+            //const array = [...this.state.currentMessage];
+            //array.push(data.message);
             this.setState({
                 timer: timerT,
                 counter: counterT, 
