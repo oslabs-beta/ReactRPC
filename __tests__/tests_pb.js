@@ -1,4 +1,4 @@
-const { reactRPC } = require("testreactrpc");
+const { googleRPC } = require("testreactrpc");
 const requests = require("../helloworld_pb.js");
 const clients = require("../helloworld_grpc_web_pb.js");
 
@@ -7,12 +7,12 @@ let healthResponse;
 let nestedResponse;
 
 beforeAll(done => {
-  reactRPC.build(
+  googleRPC.build(
     requests,
     clients,
     "http://" + window.location.hostname + ":8080"
   );
-  reactRPC.functions.Greeter.sayHello(
+  googleRPC.functions.Greeter.sayHello(
     { name: "John", lastName: " Doe", msgType: "HelloRequest" },
     {},
     (err, res) => {
@@ -23,7 +23,7 @@ beforeAll(done => {
 });
 
 beforeAll(done => {
-  reactRPC.functions.Health.check(
+  googleRPC.functions.Health.check(
     { service: "Greeter", msgType: "HealthCheckRequest" },
     {},
     (err, response) => {
@@ -34,7 +34,7 @@ beforeAll(done => {
 });
 
 beforeAll(done => {
-  reactRPC.functions.Greeter.sayHelloNested(
+  googleRPC.functions.Greeter.sayHelloNested(
     {
       myName: { name: "John", lastName: " Doe", msgType: "FullName" },
       msgType: "TestNested"
@@ -47,46 +47,46 @@ beforeAll(done => {
   );
 });
 
-describe("ReactRPC should have built in keys", () => {
-  it("ReactRPC should be an Object", () => {
-    expect(reactRPC).toBeInstanceOf(Object);
+describe("googleRPC should have built in keys", () => {
+  it("googleRPC should be an Object", () => {
+    expect(googleRPC).toBeInstanceOf(Object);
   });
-  it("ReactRPC should have build", () => {
-    expect(reactRPC.build).not.toEqual(undefined);
+  it("googleRPC should have build", () => {
+    expect(googleRPC.build).not.toEqual(undefined);
   });
-  it("ReactRPC should have wrapper", () => {
-    expect(reactRPC.wrapper).not.toEqual(undefined);
+  it("googleRPC should have wrapper", () => {
+    expect(googleRPC.wrapper).not.toEqual(undefined);
   });
-  it("ReactRPC should have functions", () => {
-    expect(reactRPC.functions).not.toEqual(undefined);
+  it("googleRPC should have functions", () => {
+    expect(googleRPC.functions).not.toEqual(undefined);
   });
 });
 
-describe("ReactRPC should have services", () => {
-  it("ReactRPC should have Greeter", () => {
-    expect(reactRPC.functions.Greeter).not.toEqual(undefined);
+describe("googleRPC should have services", () => {
+  it("googleRPC should have Greeter", () => {
+    expect(googleRPC.functions.Greeter).not.toEqual(undefined);
   });
 
-  it("ReactRPC Greeter should have sayHello service", () => {
-    expect(reactRPC.functions.Greeter.sayHello).not.toEqual(undefined);
+  it("googleRPC Greeter should have sayHello service", () => {
+    expect(googleRPC.functions.Greeter.sayHello).not.toEqual(undefined);
   });
 
-  it("ReactRPC Greeter should have sayRepeatHello service", () => {
-    expect(reactRPC.functions.Greeter.sayRepeatHello).not.toEqual(undefined);
+  it("googleRPC Greeter should have sayRepeatHello service", () => {
+    expect(googleRPC.functions.Greeter.sayRepeatHello).not.toEqual(undefined);
   });
 
-  it("ReactRPC Greeter should have sayHelloAfterDelay service", () => {
-    expect(reactRPC.functions.Greeter.sayHelloAfterDelay).not.toEqual(
+  it("googleRPC Greeter should have sayHelloAfterDelay service", () => {
+    expect(googleRPC.functions.Greeter.sayHelloAfterDelay).not.toEqual(
       undefined
     );
   });
 
-  it("ReactRPC should have Health", () => {
-    expect(reactRPC.functions.Health).not.toEqual(undefined);
+  it("googleRPC should have Health", () => {
+    expect(googleRPC.functions.Health).not.toEqual(undefined);
   });
 
-  it("ReactRPC healthshould have Check service", () => {
-    expect(reactRPC.functions.Health.check).not.toEqual(undefined);
+  it("googleRPC healthshould have Check service", () => {
+    expect(googleRPC.functions.Health.check).not.toEqual(undefined);
   });
 });
 

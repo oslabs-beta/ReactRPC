@@ -1,13 +1,13 @@
 import React from "react";
 import { Component } from "react";
-//import wrapper from "/Users/joshnaso/Desktop/ReactRPC/ReactRPC/wrapper.js";
+//import wrapper from "/Users/joshnaso/Desktop/googleRPC/googleRPC/wrapper.js";
 
-const { reactRPC } = require("../../../testreactrpc");
+const { googleRPC } = require("../../../testreactrpc");
 
 const requests = require("../../helloworld_pb.js");
 const clients = require("../../helloworld_grpc_web_pb.js");
 
-reactRPC.build(
+googleRPC.build(
   requests,
   clients,
   "http://" + window.location.hostname + ":8080"
@@ -37,10 +37,10 @@ class App extends Component {
     );
     return (
       <div>
-        <h1>ReactRPC</h1>
+        <h1>googleRPC</h1>
       </div>
     );
   }
 }
 
-export default reactRPC.wrapper(App);
+export default googleRPC.wrapper(App);
