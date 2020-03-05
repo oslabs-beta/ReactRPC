@@ -1,4 +1,4 @@
-const { reactRPC } = require("testreactrpc");
+const { googleRPC } = require("testreactrpc");
 const requests = require("../helloworld_pb.js");
 const clients = require("../helloworld_grpc_web_pb.js");
 
