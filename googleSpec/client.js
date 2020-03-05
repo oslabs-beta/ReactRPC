@@ -37,7 +37,6 @@ import App from './client/components/app.jsx';
 //    HelloReply } from './helloworld_pb.js';
 
 // // helloworld_grpc_web_pb is for services for the client and server
-const { GreeterClient, GreeterPromiseClient } = require('./helloworld_grpc_web_pb.js');
 
 // import { GreeterClient } from './helloworld_grpc_web_pb.js';
 // reactRPC.functions.Greeter.sayHello({name: "Josh", lastName: " Naso", messageType: "HelloRequest"}, {}, (err, response) => {
