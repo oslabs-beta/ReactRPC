@@ -46,16 +46,61 @@
   },
   "files": [
     "lib",
-    "index.js"
+    "index.js",
+    "index.d.ts",
+    "tsconfig.json"
   ],
   "license": "ISC",
   "main": "index.js",
   "types": "index.d.ts",
-  "name": "testreactrpc",
+  "name": "reactrpc",
   "scripts": {
     "prepublishOnly": "babel ./lib --out-dir ./lib",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc index.ts --watch"
   },
-  "version": "1.0.205"
+  "homepage": "https://github.com/oslabs-beta/ReactRPC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/ReactRPC.git"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "grpc",
+    "grpc-node",
+    "grpcjs",
+    "grpc-js",
+    "grpc-web",
+    "grpc-caller",
+    "@grpc/proto-loader",
+    "@grpc/grpc-js",
+    "protobufjs",
+    "protobuf",
+    "protocol buffer",
+    "protobufs",
+    "protocol buffers",
+    "http2",
+    "http/2",
+    "http-2",
+    "health-check",
+    "health check",
+    "stubby",
+    "stub",
+    "service",
+    "grpc-caller",
+    "grpc-promise",
+    "grpc-promise2",
+    "grpc-promise-meta",
+    "grpc-promisify",
+    "grpc-client-promise",
+    "grpc client",
+    "grpc-client",
+    "grpc caller",
+    "server",
+    "distributed systems",
+    "microservice",
+    "microservices"
+  ],
+  "version": "1.0.4"
 }
