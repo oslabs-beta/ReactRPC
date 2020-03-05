@@ -1,10 +1,10 @@
 const { reactWrapper } = require("./lib/wrap-original.js");
 const { grpc } = require("@improbable-eng/grpc-web");
-const reactRPC = { functions: {}, build: {}, wrapper: {} };
+const googleRPC = { functions: {}, build: {}, wrapper: {} };
 let client = {};
 let messages = {};
 let url_name;
-//Sets up the service and message calls through reactRPC
+//Sets up the service and message calls through googleRPC
 const improbRPC = { functions: {}, build: {}, wrapper: {} };
 improbRPC.build = function(requests, clients, URL) {
   url_name = URL;
@@ -48,14 +48,14 @@ improbRPC.build = function(requests, clients, URL) {
     }
   }
 };
-reactRPC.build = function(
+googleRPC.build = function(
   requests,
   clients,
   URL,
   config = null,
   security = null
 ) {
-  //Maps all the requests from the pb file to ReactRPC
+  //Maps all the requests from the pb file to googleRPC
   if (requests instanceof Array) {
     for (let i = 0; i < requests.length; i++) {
       for (let props in requests[i]) {
@@ -145,11 +145,11 @@ function improbableCreator(service, method) {
 }
 function ServiceCreator(clientName, URL, config = null, security = null) {
   //Dynamically create new client with passed in URL
-  reactRPC.functions[clientName] = {};
+  googleRPC.functions[clientName] = {};
   const currClient = new client[clientName](URL, config, security);
   for (let serviceCall in currClient) {
     if (!currClient.hasOwnProperty(serviceCall)) {
-      reactRPC.functions[clientName][serviceCall] = function(data, ...args) {
+      googleRPC.functions[clientName][serviceCall] = function(data, ...args) {
         //Make sure data recieved is an object before sending it to serialize
         if (typeof data === "object" && data !== null) {
           let req = serialize(data, messages);
@@ -228,11 +228,11 @@ function serialize(data, messages) {
   }
   return newMessage;
 }
-reactRPC.wrapper = function(WrappedComponent) {
-  return reactWrapper(WrappedComponent, reactRPC.functions);
+googleRPC.wrapper = function(WrappedComponent) {
+  return reactWrapper(WrappedComponent, googleRPC.functions);
 };
 improbRPC.wrapper = function(WrappedComponent) {
   return reactWrapper(WrappedComponent, improbRPC.functions);
 };
 
-module.exports = { improbRPC, reactRPC };
+module.exports = { improbRPC, googleRPC };
