@@ -116,6 +116,9 @@ function improbableCreator(service, method) {
           return cb(null, res.toObject());
         });
       } else {
+        user.sendMessage = function(req) {
+          user.send(serialize(req));
+        };
         user.on = function(event, cb) {
           switch (event) {
             case "data":
