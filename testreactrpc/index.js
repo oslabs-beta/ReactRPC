@@ -179,6 +179,13 @@ function ServiceCreator(clientName, URL, config = null, security = null) {
   }
 }
 function serialize(data, messages) {
+  const toPascalCase = (prop) => {
+    let result = "";
+    for (const part of prop.split("_")) {
+      result += part[0].toUpperCase() + part.slice(1);
+    }
+    return result;
+  };
   //Build in check if data is an object/array. If not, just return the value
   if (Array.isArray(data)) {
     throw new Error("Type must be an object or primitive");
@@ -203,7 +210,7 @@ function serialize(data, messages) {
       if (Array.isArray(data[prop])) {
         //find the addElement key
         let newKey =
-          "add" + prop[0].toUpperCase() + prop.slice(1).toLowerCase();
+          "add" + toPascalCase(prop);
         //If addElement method is undefined throw Error saying cannot find the proper method
         //Otherwise loop through array and add all the elements to the method
         if (newMessage[newKey] !== undefined) {
@@ -216,8 +223,7 @@ function serialize(data, messages) {
         }
       } else {
         //Otherwise we just set the field with the value of the property
-        let newKey =
-          "set" + prop[0].toUpperCase() + prop.slice(1).toLowerCase();
+        let newKey = "set" + toPascalCase(prop);
         //If method cannot be found throw error
         if (newMessage[newKey] !== undefined) {
           let val = serialize(data[prop], messages);
