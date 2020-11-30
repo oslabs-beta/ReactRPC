@@ -6,7 +6,7 @@ let messages = {};
 let url_name;
 //Sets up the service and message calls through googleRPC
 const improbRPC = { functions: {}, build: {}, wrapper: {} };
-improbRPC.build = function(requests, clients, URL) {
+improbRPC.build = function (requests, clients, URL) {
   url_name = URL;
   //map all of requests
   if (requests instanceof Array) {
@@ -48,7 +48,7 @@ improbRPC.build = function(requests, clients, URL) {
     }
   }
 };
-googleRPC.build = function(
+googleRPC.build = function (
   requests,
   clients,
   URL,
@@ -103,25 +103,23 @@ googleRPC.build = function(
 };
 
 function improbableCreator(service, method) {
-  return function(data, meta, cb = undefined) {
+  return function (data, meta, cb = undefined) {
     if (typeof data === "object" && data !== null) {
       let req = serialize(data, messages);
       let user = grpc.client(client[service][method], {
-        host: url_name
+        host: url_name,
       });
       user.start(grpc.Metadata(meta));
       user.send(req);
       if (cb !== undefined) {
-        user.onMessage(res => {
+        user.onMessage((res) => {
           return cb(null, res.toObject());
         });
       } else {
-
-        user.sendMessage = function(obj) {
+        user.sendMessage = function (obj) {
           return user.send(serialize(obj));
-
         };
-        user.on = function(event, cb) {
+        user.on = function (event, cb) {
           switch (event) {
             case "data":
               user.onMessage(cb);
@@ -151,20 +149,20 @@ function ServiceCreator(clientName, URL, config = null, security = null) {
   const currClient = new client[clientName](URL, config, security);
   for (let serviceCall in currClient) {
     if (!currClient.hasOwnProperty(serviceCall)) {
-      googleRPC.functions[clientName][serviceCall] = function(data, ...args) {
+      googleRPC.functions[clientName][serviceCall] = function (data, ...args) {
         //Make sure data recieved is an object before sending it to serialize
         if (typeof data === "object" && data !== null) {
           let req = serialize(data, messages);
           const stream = currClient[serviceCall](req, ...args);
           //Add improbable's streaming calls to create uniformity for users
           if (typeof stream === "object") {
-            stream.onMessage = function(cb) {
+            stream.onMessage = function (cb) {
               stream.on("data", cb);
             };
-            stream.onHeaders = function(cb) {
+            stream.onHeaders = function (cb) {
               stream.on("status", cb);
             };
-            stream.onEnd = function(cb) {
+            stream.onEnd = function (cb) {
               stream.on("end", cb);
             };
           }
@@ -210,16 +208,25 @@ function serialize(data, messages) {
       if (Array.isArray(data[prop])) {
         //find the addElement key
         let newKey =
-          "add" + toPascalCase(prop);
-        //If addElement method is undefined throw Error saying cannot find the proper method
-        //Otherwise loop through array and add all the elements to the method
-        if (newMessage[newKey] !== undefined) {
-          for (let el of data[prop]) {
-            let val = serialize(data[prop][el], messages);
-            newMessage[newKey](val);
+          "add" + prop[0].toUpperCase() + prop.slice(1).toLowerCase();
+        if (typeof data === "object") {
+          if (newMessage[newKey] !== undefined) {
+            for (let el of data[prop]) {
+              let val = serialize(el, messages);
+              newMessage[newKey](val);
+            }
+          } else {
+            throw new Error("Message field is invalid: " + prop);
           }
         } else {
-          throw new Error("Message field is invalid: " + prop);
+          if (newMessage[newKey] !== undefined) {
+            for (let el of data[prop]) {
+              let val = serialize(data[prop][el], messages);
+              newMessage[newKey](val);
+            }
+          } else {
+            throw new Error("Message field is invalid: " + prop);
+          }
         }
       } else {
         //Otherwise we just set the field with the value of the property
@@ -236,10 +243,10 @@ function serialize(data, messages) {
   }
   return newMessage;
 }
-googleRPC.wrapper = function(WrappedComponent) {
+googleRPC.wrapper = function (WrappedComponent) {
   return reactWrapper(WrappedComponent, googleRPC.functions);
 };
-improbRPC.wrapper = function(WrappedComponent) {
+improbRPC.wrapper = function (WrappedComponent) {
   return reactWrapper(WrappedComponent, improbRPC.functions);
 };
 
